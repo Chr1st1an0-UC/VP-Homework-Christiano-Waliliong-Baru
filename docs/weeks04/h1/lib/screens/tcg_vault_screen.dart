@@ -188,19 +188,18 @@ class _TcgVaultScreenState extends State<TcgVaultScreen> {
 
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: padding),
-            child: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Padding(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
                     padding: const EdgeInsets.only(top: 8.0, bottom: 12.0),
                     child: VaultHeaderCard(
                       totalValue: _totalValue,
                       totalCards: _cards.length,
                     ),
                   ),
-                ),
-                SliverToBoxAdapter(
-                  child: Padding(
+                  Padding(
                     padding: const EdgeInsets.only(bottom: 12.0),
                     child: VaultSearchBar(
                       onChanged: (value) {
@@ -210,9 +209,7 @@ class _TcgVaultScreenState extends State<TcgVaultScreen> {
                       },
                     ),
                   ),
-                ),
-                SliverToBoxAdapter(
-                  child: Padding(
+                  Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: CategoryFilterChips(
                       selectedCategory: _selectedCategory,
@@ -223,41 +220,34 @@ class _TcgVaultScreenState extends State<TcgVaultScreen> {
                       },
                     ),
                   ),
-                ),
-                if (_filteredCards.isEmpty)
-                  SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: EmptyStateView(onActionPressed: _resetFilters),
-                  )
-                else
-                  SliverGrid(
+                  
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: crossAxisCount,
                       childAspectRatio: 0.7,
                       crossAxisSpacing: 12,
                       mainAxisSpacing: 12,
                     ),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final card = _filteredCards[index];
-                        return CardGridTile(
-                          card: card,
-                          onFavoriteToggle: () {
-                            setState(() {
-                              _cards[index] = card.copyWith(
-                                isFavorite: !card.isFavorite,
-                              );
-                            });
-                          },
-                        );
-                      },
-                      childCount: _filteredCards.length,
-                    ),
+                    itemCount: _filteredCards.length,
+                    itemBuilder: (context, index) {
+                      final card = _filteredCards[index];
+                      return CardGridTile(
+                        card: card,
+                        onFavoriteToggle: () {
+                          setState(() {
+                            _cards[index] = card.copyWith(
+                              isFavorite: !card.isFavorite,
+                            );
+                          });
+                        },
+                      );
+                    },
                   ),
-                const SliverToBoxAdapter(
-                  child: SizedBox(height: 24),
-                ),
-              ],
+                  const SizedBox(height: 24),
+                ],
+              ),
             ),
           );
         },
